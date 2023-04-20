@@ -16,6 +16,10 @@ const DIST_URL = 'https://www.xupea.com/robotjs';
 // const SUPPORTED_ARCH = ['x64', 'x86', 'arm64', 'mips64el'];
 
 async function getRobotjsPath() {
+  if (process.env.npm_config_custom) {
+    return process.env.npm_config_custom;
+  }
+
   const cpu = await si.cpu();
   const osInfo = await si.osInfo();
 
@@ -27,9 +31,9 @@ async function getRobotjsPath() {
     }
   }
 
-  console.log(`${process.platform}-${process.arch}`)
+  const segments = [process.platform, process.arch];
 
-  return `${process.platform}-${process.arch}`;
+  return segments.join('-');
 }
 
 function getAssetUrl(path) {
