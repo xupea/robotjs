@@ -24,10 +24,13 @@ async function getRobotjsPath() {
   const osInfo = await si.osInfo();
 
   if (osInfo.platform === 'linux') {
-    if (cpu.arch === 'x64' && cpu.vendor === 'Hygon') {
-        return `${osInfo.distro}-${cpu.arch}-Hygon`;
-    } else if (cpu.arch === 'mips64el') {
-        return `${osInfo.distro}-${cpu.arch}-Loongson`;
+    const arch = cpu.arch || osInfo.arch || process.arch;
+    if (arch === 'x64' && cpu.vendor === 'Hygon') {
+      return `${osInfo.distro}-${arch}-Hygon`;
+    } else if (arch === 'mips64el') {
+      return `${osInfo.distro}-${arch}-Loongson`;
+    } else if (arch === 'arm64') {
+      return `${osInfo.distro}-${arch}`;
     }
   }
 
@@ -46,13 +49,13 @@ async function downloadArtifact(source, dest) {
   await download(source, dest, {
     extract: true,
     map: (file) => {
-      if (file.type === "file" && file.path.endsWith("/")) {
-        file.type = "directory";
+      if (file.type === 'file' && file.path.endsWith('/')) {
+        file.type = 'directory';
       }
       return file;
     },
   }).on(
-    "downloadProgress",
+    'downloadProgress',
     throttle(({ percent, transferred, total }) => {
       spinner.info(
         `Downloading progress ${(percent * 100).toFixed(
@@ -65,12 +68,12 @@ async function downloadArtifact(source, dest) {
 }
 
 async function install() {
-//   if (!SUPPORTED_PLATFORM.includes(os.platform())) {
-//     throw Error(`Platform: ${os.platform()} is not supported!`);
-//   }
-//   if (!RTM_ARTIFACTS[`${os.platform()}-${arch}`]) {
-//     throw Error(`Arch: ${arch} is not supported!`);
-//   }
+  //   if (!SUPPORTED_PLATFORM.includes(os.platform())) {
+  //     throw Error(`Platform: ${os.platform()} is not supported!`);
+  //   }
+  //   if (!RTM_ARTIFACTS[`${os.platform()}-${arch}`]) {
+  //     throw Error(`Arch: ${arch} is not supported!`);
+  //   }
   await util.promisify(rimraf)(BUILD_FOLDER);
   await fs.mkdir(BUILD_FOLDER);
   await fs.mkdir(RELEASE_FOLDER);
