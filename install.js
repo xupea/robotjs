@@ -31,6 +31,8 @@ async function getRobotjsPath() {
       return `${osInfo.distro}-${arch}-Loongson`;
     } else if (arch === 'arm64') {
       return `${osInfo.distro}-${arch}`;
+    } else if (arch === 'loong64') {
+      return `${osInfo.distro}-${arch}-Loongson`;
     }
   }
 
